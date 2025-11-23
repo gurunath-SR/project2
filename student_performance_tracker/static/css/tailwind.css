@@ -1,1 +1,38 @@
 /* Tailwind CSS */
+/* --- Custom additions for teacher dashboard --- */
+
+/* floating / slight vertical animation for college name */
+@keyframes floatX {
+  0% { transform: translateX(-5px); opacity: .98; }
+  50% { transform: translateX(5px); opacity: 1; }
+  100% { transform: translateX(-5px); opacity: .98; }
+}
+.college-marquee {
+  display: inline-block;
+  animation: floatX 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* card subtle hover */
+.card {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(16,24,40,0.06);
+}
+
+/* icon box */
+.icon-box {
+  width: 44px;
+  height: 44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  background: rgba(99,102,241,0.06); /* subtle */
+  color: #4f46e5;
+}
+
+/* dark theme tweaks */
+.dark .icon-box { background: rgba(99,102,241,0.12); color: #c7d2fe; }

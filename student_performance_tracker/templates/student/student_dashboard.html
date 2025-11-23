@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Header -->
+  <div class="bg-blue-600 text-white p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Student Dashboard</h1>
+    <a href="{{ url_for('logout') }}" class="underline hover:text-gray-300">Logout</a>
+  </div>
+
+  <div class="p-6">
+
+    <!-- Welcome -->
+    <h2 class="text-xl font-semibold mb-4">Welcome, {{ name }} ({{ usn }})</h2>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-lg font-semibold mb-2">Attendance</h3>
+        <p class="text-2xl font-bold text-blue-600">{{ student.attendance }}%</p>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-lg font-semibold mb-2">Study Hours</h3>
+        <p class="text-2xl font-bold text-green-600">{{ student.study_hours }} hrs</p>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-lg font-semibold mb-2">Total Marks</h3>
+        <p class="text-2xl font-bold text-red-600">{{ student.marks }}</p>
+      </div>
+    </div>
+
+    <!-- Subject-wise Marks Chart -->
+    <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+      <h3 class="text-lg font-semibold mb-4">Subject-wise Marks</h3>
+      <div class="w-full" style="max-width: 600px; margin: auto;">
+        <canvas id="marksChart" width="600" height="300"></canvas>
+      </div>
+    </div>
+
+    <!-- Colored Table -->
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <h3 class="text-lg font-semibold mb-4">Detailed Marks</h3>
+      <table class="w-full table-auto border-collapse">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border px-4 py-2 text-left">Subject</th>
+            <th class="border px-4 py-2 text-left">Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for subject, score in student.items() %}
+            {% if subject in ['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'] %}
+            <tr class="{% if score>=85 %}bg-green-100{% elif score>=60 %}bg-yellow-100{% else %}bg-red-100{% endif %}">
+              <td class="border px-4 py-2">{{ subject }}</td>
+              <td class="border px-4 py-2">{{ score }}</td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Chart JS Script -->
+  <script>
+    const ctx = document.getElementById('marksChart').getContext('2d');
+    const marksChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['ADA', 'DBMS', 'SEPM', 'RMK', 'CC', 'ESK', 'SDK'],
+        datasets: [{
+          label: 'Marks',
+          data: [
+            {{ student.ADA }}, {{ student.DBMS }}, {{ student.SEPM }},
+            {{ student.RMK }}, {{ student.CC }}, {{ student.ESK }}, {{ student.SDK }}
+          ],
+          backgroundColor: [
+            '{{ "#16a34a" if student.ADA>=85 else "#facc15" if student.ADA>=60 else "#ef4444" }}',
+            '{{ "#16a34a" if student.DBMS>=85 else "#facc15" if student.DBMS>=60 else "#ef4444" }}',
+            '{{ "#16a34a" if student.SEPM>=85 else "#facc15" if student.SEPM>=60 else "#ef4444" }}',
+            '{{ "#16a34a" if student.RMK>=85 else "#facc15" if student.RMK>=60 else "#ef4444" }}',
+            '{{ "#16a34a" if student.CC>=85 else "#facc15" if student.CC>=60 else "#ef4444" }}',
+            '{{ "#16a34a" if student.ESK>=85 else "#facc15" if student.ESK>=60 else "#ef4444" }}',
+            '{{ "#16a34a" if student.SDK>=85 else "#facc15" if student.SDK>=60 else "#ef4444" }}'
+          ]
+        }]
+      },
+      options: {
+        responsive: false,          // fixed size
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Subject-wise Marks', color: '#1f2937', font: { size: 16 } }
+        },
+        scales: {
+          y: { beginAtZero: true, max: 100, ticks: { color: '#1f2937', stepSize: 10 } },
+          x: { ticks: { color: '#1f2937' } }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

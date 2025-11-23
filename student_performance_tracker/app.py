@@ -80,7 +80,8 @@
 
 #------------------------------------------------------------------------
 
-
+#---------------------------------------------------
+'''
 # app.py
 from flask import Flask, render_template, request, redirect, url_for
 from db_handler import fetch_students, fetch_student_by_usn, insert_student, update_student, delete_student
@@ -170,4 +171,208 @@ def delete_student_route(student_id):
 
 # --------------------- Run App --------------------- #
 if __name__ == '__main__':
+    app.run(debug=True)
+'''
+
+'''
+
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from db_handler import fetch_student_by_usn
+from datetime import datetime
+
+app = Flask(__name__)
+app.secret_key = "supersecretkey"  # session key
+
+# --------------------- Home --------------------- #
+@app.route("/")
+def home():
+    return redirect(url_for('student_login'))
+
+# --------------------- Student Login --------------------- #
+@app.route("/student_login", methods=["GET", "POST"])
+def student_login():
+    if request.method == "POST":
+        usn = request.form['usn']
+        password = request.form['password']  # expects DDMMYYYY
+        student = fetch_student_by_usn(usn)
+        
+        if student:
+            dob_password = student['dob'].strftime('%d%m%Y')  # convert DOB to DDMMYYYY
+            if password == dob_password:
+                session['usn'] = usn
+                session['name'] = student['name']
+                session['role'] = 'student'
+                flash(f"Welcome {student['name']}!", "success")
+                return redirect("/student_dashboard")
+            else:
+                flash("Incorrect password. Use your DOB as DDMMYYYY.", "error")
+        else:
+            flash("USN not found.", "error")
+    
+    return render_template("login/student_login.html")
+
+# --------------------- Teacher Login --------------------- #
+# --------------------- Teacher Login --------------------- #
+@app.route('/teacher_login', methods=['GET', 'POST'])
+def teacher_login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM teachers WHERE email=%s AND password=%s", (email, password))
+        teacher = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if teacher:
+            session['teacher_name'] = teacher['name']
+            session['teacher_id'] = teacher['id']
+            return redirect(url_for('teacher_dashboard'))  # redirect to teacher dashboard
+        else:
+            flash("Invalid email or password", "error")
+            return redirect(url_for('teacher_login'))
+
+    return render_template('login/teacher_login.html')
+
+
+# --------------------- Student Dashboard --------------------- #
+from db_handler import fetch_student_by_usn
+
+@app.route("/student_dashboard")
+def student_dashboard():
+    if session.get('role') != 'student':
+        flash("Please login as student first.", "error")
+        return redirect(url_for('student_login'))
+
+    usn = session.get('usn')
+    student = fetch_student_by_usn(usn)  # fetch all student data
+    
+    return render_template("student/student_dashboard.html",
+                           name=student['name'],
+                           usn=student['usn'],
+                           student=student)
+
+
+
+# --------------------- Teacher Dashboard --------------------- #
+@app.route("/teacher_dashboard")
+def teacher_dashboard():
+    if session.get('role') != 'teacher':
+        flash("Please login as teacher first.", "error")
+        return redirect(url_for('teacher_login'))
+    return "Welcome Teacher! This is your Teacher Dashboard."
+
+# --------------------- Logout --------------------- #
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Logged out successfully.", "success")
+    return redirect(url_for('home'))
+
+# --------------------- Run App --------------------- #
+if __name__ == "__main__":
+    app.run(debug=True)
+
+'''
+
+
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from db_handler import fetch_student_by_usn, get_connection, fetch_students
+from datetime import datetime
+
+app = Flask(__name__)
+app.secret_key = "supersecretkey"  # session key
+
+# --------------------- Home --------------------- #
+@app.route("/")
+def home():
+    return redirect(url_for('student_login'))
+
+# --------------------- Student Login --------------------- #
+@app.route("/student_login", methods=["GET", "POST"])
+def student_login():
+    if request.method == "POST":
+        usn = request.form['usn']
+        password = request.form['password']  # expects DDMMYYYY
+        student = fetch_student_by_usn(usn)
+        
+        if student:
+            dob_password = student['dob'].strftime('%d%m%Y')  # convert DOB to DDMMYYYY
+            if password == dob_password:
+                session['usn'] = usn
+                session['name'] = student['name']
+                session['role'] = 'student'
+                flash(f"Welcome {student['name']}!", "success")
+                return redirect("/student_dashboard")
+            else:
+                flash("Incorrect password. Use your DOB as DDMMYYYY.", "error")
+        else:
+            flash("USN not found.", "error")
+    
+    return render_template("login/student_login.html")
+
+# --------------------- Teacher Login --------------------- #
+@app.route('/teacher_login', methods=['GET', 'POST'])
+def teacher_login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM teachers WHERE email=%s AND password=%s", (email, password))
+        teacher = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if teacher:
+            session['teacher_name'] = teacher['name']
+            session['teacher_id'] = teacher['id']
+            session['role'] = 'teacher'
+            flash(f"Welcome {teacher['name']}!", "success")
+            return redirect(url_for('teacher_dashboard'))
+        else:
+            flash("Invalid email or password", "error")
+            return redirect(url_for('teacher_login'))
+
+    return render_template("login/teacher_login.html")  # Make sure this exists
+
+# --------------------- Student Dashboard --------------------- #
+@app.route("/student_dashboard")
+def student_dashboard():
+    if session.get('role') != 'student':
+        flash("Please login as student first.", "error")
+        return redirect(url_for('student_login'))
+
+    usn = session.get('usn')
+    student = fetch_student_by_usn(usn)  # fetch all student data
+    
+    return render_template("student/student_dashboard.html",
+                           name=student['name'],
+                           usn=student['usn'],
+                           student=student)
+
+# --------------------- Teacher Dashboard --------------------- #
+@app.route("/teacher_dashboard")
+def teacher_dashboard():
+    if session.get('role') != 'teacher':
+        flash("Please login as teacher first.", "error")
+        return redirect(url_for('teacher_login'))
+    
+    students = fetch_students()  # fetch all students for teacher view
+    return render_template("teacher/teacher_dashboard.html",
+                           teacher_name=session['teacher_name'],
+                           students=students)
+
+# --------------------- Logout --------------------- #
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Logged out successfully.", "success")
+    return redirect(url_for('home'))
+
+# --------------------- Run App --------------------- #
+if __name__ == "__main__":
     app.run(debug=True)

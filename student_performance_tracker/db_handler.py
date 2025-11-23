@@ -69,6 +69,8 @@ def fetch_students():
     return students
 '''
 
+
+'''
 # db_handler.py
 import mysql.connector
 
@@ -166,6 +168,118 @@ def update_student(student):
         student.get('CC', 0),
         student.get('ESK', 0),
         student.get('SDK', 0),
+        student['usn']
+    )
+    cursor.execute(query, values)
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+# --------------------- Delete Student --------------------- #
+def delete_student(usn):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM students WHERE usn=%s", (usn,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+'''
+
+
+import mysql.connector
+from datetime import datetime
+
+# --------------------- Database Connection --------------------- #
+def get_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="gurunath@2004",
+        database="student_tracker_v2"
+    )
+
+# --------------------- Fetch All Students --------------------- #
+def fetch_students():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return students
+
+# --------------------- Fetch One Student by USN --------------------- #
+def fetch_student_by_usn(usn):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM students WHERE usn=%s", (usn,))
+    student = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return student
+
+# --------------------- Insert Student --------------------- #
+def insert_student(student):
+    total_marks = sum([
+        student.get('ADA', 0), student.get('DBMS', 0), student.get('SEPM', 0),
+        student.get('RMK', 0), student.get('CC', 0), student.get('ESK', 0), student.get('SDK', 0)
+    ])
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    query = """
+        INSERT INTO students 
+        (usn, name, attendance, study_hours, marks, ADA, DBMS, SEPM, RMK, CC, ESK, SDK, dob)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    values = (
+        student['usn'],
+        student['name'],
+        student.get('attendance', 0),
+        student.get('study_hours', 0),
+        total_marks,
+        student.get('ADA', 0),
+        student.get('DBMS', 0),
+        student.get('SEPM', 0),
+        student.get('RMK', 0),
+        student.get('CC', 0),
+        student.get('ESK', 0),
+        student.get('SDK', 0),
+        student.get('dob')  # datetime.date object
+    )
+    cursor.execute(query, values)
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+# --------------------- Update Student --------------------- #
+def update_student(student):
+    total_marks = sum([
+        student.get('ADA', 0), student.get('DBMS', 0), student.get('SEPM', 0),
+        student.get('RMK', 0), student.get('CC', 0), student.get('ESK', 0), student.get('SDK', 0)
+    ])
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    query = """
+        UPDATE students
+        SET attendance=%s, study_hours=%s, marks=%s,
+            ADA=%s, DBMS=%s, SEPM=%s, RMK=%s, CC=%s, ESK=%s, SDK=%s,
+            dob=%s
+        WHERE usn=%s
+    """
+    values = (
+        student.get('attendance', 0),
+        student.get('study_hours', 0),
+        total_marks,
+        student.get('ADA', 0),
+        student.get('DBMS', 0),
+        student.get('SEPM', 0),
+        student.get('RMK', 0),
+        student.get('CC', 0),
+        student.get('ESK', 0),
+        student.get('SDK', 0),
+        student.get('dob'),
         student['usn']
     )
     cursor.execute(query, values)

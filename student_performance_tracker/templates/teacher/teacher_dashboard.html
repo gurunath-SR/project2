@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot" class="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  /* Floating animation for college name */
+  @keyframes floatX {
+    0% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    100% { transformX(-5px); }
+  }
+  .floatX {
+    animation: floatX 3s ease-in-out infinite;
+  }
+</style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+<!-- Navbar -->
+<nav class="bg-gradient-to-r from-red-500 to-yellow-500 dark:from-gray-800 dark:to-gray-900 text-white px-6 py-4 flex justify-between items-center shadow-lg">
+  <div class="flex items-center space-x-3">
+    <img src="{{ url_for('static', filename='images/college_icon.png') }}" class="h-10 w-10 rounded-full" alt="Logo">
+    <h1 class="text-2xl font-bold tracking-wide floatX">New Horizon College of Engineering</h1>
+  </div>
+  <div class="flex items-center space-x-4">
+    <button id="themeToggle" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-1 rounded shadow hover:ring-2 hover:ring-red-400 transition">Toggle Theme</button>
+    <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 px-4 py-1 rounded shadow transition">Logout</a>
+  </div>
+</nav>
+
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-72 bg-indigo-50 dark:bg-gray-800 shadow-lg p-6 space-y-6 hidden md:block">
+    <!-- Profile -->
+    <div class="flex items-center space-x-3 mb-6">
+      <img src="{{ url_for('static', filename='images/college_icon.png') }}" class="h-12 w-12 rounded-full" alt="Teacher Photo">
+      <div>
+        <p class="font-semibold text-gray-800 dark:text-gray-200">{{ teacher_name }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">{{ teacher_email }}</p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="space-y-2">
+      <a href="#" class="block px-3 py-2 rounded hover:bg-red-500 hover:text-white transition">Dashboard</a>
+      <a href="#" class="block px-3 py-2 rounded hover:bg-green-500 hover:text-white transition">Analytics</a>
+      <a href="#" class="block px-3 py-2 rounded hover:bg-yellow-500 hover:text-white transition">Settings</a>
+      <a href="{{ url_for('logout') }}" class="block px-3 py-2 rounded hover:bg-gray-600 hover:text-white transition">Logout</a>
+    </nav>
+
+    <!-- Department Dropdown -->
+    <div class="mt-6">
+      <label for="departmentSelect" class="block text-gray-800 dark:text-gray-200 font-medium mb-2">Department</label>
+      <select id="departmentSelect" class="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+        <option value="all">All Departments</option>
+        <option value="CSE">CSE</option>
+        <option value="ML">ML</option>
+        <option value="EC">EC</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6 space-y-6">
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="bg-red-200 dark:bg-red-800 shadow-lg rounded-lg p-6 hover:scale-105 transition transform">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Total Students</h3>
+        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ students|length }}</p>
+      </div>
+      <div class="bg-green-200 dark:bg-green-800 shadow-lg rounded-lg p-6 hover:scale-105 transition transform">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Total CSE Students</h3>
+        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ students|selectattr('department','equalto','CSE')|list|length }}</p>
+      </div>
+      <div class="bg-yellow-200 dark:bg-yellow-800 shadow-lg rounded-lg p-6 hover:scale-105 transition transform">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Total ML Students</h3>
+        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ students|selectattr('department','equalto','ML')|list|length }}</p>
+      </div>
+      <div class="bg-indigo-200 dark:bg-indigo-800 shadow-lg rounded-lg p-6 hover:scale-105 transition transform">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Total EC Students</h3>
+        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ students|selectattr('department','equalto','EC')|list|length }}</p>
+      </div>
+      <div class="bg-pink-200 dark:bg-pink-800 shadow-lg rounded-lg p-6 hover:scale-105 transition transform">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Average Attendance</h3>
+        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ students|map(attribute='attendance')|sum // students|length }}</p>
+      </div>
+      <div class="bg-teal-200 dark:bg-teal-800 shadow-lg rounded-lg p-6 hover:scale-105 transition transform">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Average Marks</h3>
+        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ students|map(attribute='marks')|sum // students|length }}</p>
+      </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 overflow-x-auto">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Students Data</h3>
+      <table class="w-full text-left border-collapse" id="studentsTable">
+        <thead>
+          <tr class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+            <th class="px-4 py-2">USN</th>
+            <th class="px-4 py-2">Name</th>
+            <th class="px-4 py-2">Department</th>
+            <th class="px-4 py-2">Attendance</th>
+            <th class="px-4 py-2">Study Hours</th>
+            <th class="px-4 py-2">Total Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <td class="px-4 py-2">{{ student.usn }}</td>
+            <td class="px-4 py-2">{{ student.name }}</td>
+            <td class="px-4 py-2">{{ student.department if student.department else 'N/A' }}</td>
+            <td class="px-4 py-2">{{ student.attendance }}</td>
+            <td class="px-4 py-2">{{ student.study_hours }}</td>
+            <td class="px-4 py-2">{{ student.marks }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Dark/Light Toggle
+  const htmlRoot = document.getElementById('htmlRoot');
+  const toggleBtn = document.getElementById('themeToggle');
+  if(localStorage.getItem('theme')==='dark') htmlRoot.classList.add('dark');
+  toggleBtn.addEventListener('click',()=>{
+    htmlRoot.classList.toggle('dark');
+    localStorage.setItem('theme', htmlRoot.classList.contains('dark')?'dark':'light');
+  });
+
+  // Department Filtering
+  const departmentSelect = document.getElementById('departmentSelect');
+  const tableRows = document.querySelectorAll('#studentsTable tbody tr');
+  departmentSelect.addEventListener('change', ()=>{
+    const dept = departmentSelect.value;
+    tableRows.forEach(row=>{
+      const cellDept = row.children[2].textContent;
+      if(dept==='all' || cellDept===dept){
+        row.style.display='';
+      } else row.style.display='none';
+    });
+  });
+</script>
+
+</body>
+</html>

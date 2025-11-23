@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
+
+    <!-- Logo -->
+    <div class="flex justify-center mb-6">
+      <img src="{{ url_for('static', filename='images/college_icon.png') }}" 
+           alt="College Logo" class="h-20 w-20 object-contain">
+    </div>
+
+    <!-- Role Tabs -->
+    <div class="flex justify-center mb-6 space-x-2">
+      <a href="{{ url_for('student_login') }}" 
+         class="px-4 py-2 font-medium rounded-lg border-b-2 border-blue-600 text-blue-600">
+         Student
+      </a>
+      <a href="{{ url_for('teacher_login') }}" 
+         class="px-4 py-2 font-medium rounded-lg border-b-2 border-transparent text-gray-600 hover:text-green-600 hover:border-green-600 transition">
+         Teacher
+      </a>
+    </div>
+
+    <!-- Login Form -->
+    <form action="/student_login" method="POST" class="space-y-5">
+      <div>
+        <label for="usn" class="block text-gray-700 font-medium mb-2">USN</label>
+        <input type="text" name="usn" id="usn" placeholder="Enter your USN"
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 
+                      focus:border-blue-500 transition" required>
+      </div>
+
+      <div>
+        <label for="password" class="block text-gray-700 font-medium mb-2">
+            Password (DOB DDMMYYYY)
+        </label>
+        <input type="password" name="password" id="password" placeholder="Enter your DOB as password"
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 
+                      focus:border-blue-500 transition" required>
+      </div>
+
+      <button type="submit" 
+              class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold
+                     hover:bg-blue-700 transition">
+        Login
+      </button>
+    </form>
+
+  </div>
+
+</body>
+</html>
