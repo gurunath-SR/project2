@@ -1,0 +1,258 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+
+    <h1 class="text-2xl font-bold mb-4">Student Details: {{ student.usn }}</h1>
+
+    <p><strong>Name:</strong> {{ student.name }}</p>
+    <p><strong>Attendance:</strong> {{ student.attendance }}</p>
+    <p><strong>Study Hours:</strong> {{ student.study_hours }}</p>
+    <p><strong>Total Marks:</strong> {{ student.marks }}</p>
+
+    <h2 class="font-semibold mt-4 mb-2">Subject Marks</h2>
+    <ul class="list-disc pl-5">
+        {% for sub in ['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'] %}
+        <li><strong>{{ sub }}:</strong> {{ student[sub] }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('dashboard') }}" class="inline-block mt-4 text-blue-500 hover:underline">Back to Dashboard</a>
+</div>
+</body>
+</html>
+
+#################first vesion
+-->
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+<div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+
+    <h1 class="text-3xl font-bold mb-4 text-center">Student Details</h1>
+
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+            <p><span class="font-semibold">USN:</span> {{ student.usn }}</p>
+            <p><span class="font-semibold">Name:</span> {{ student.name }}</p>
+            <p><span class="font-semibold">Attendance:</span> {{ student.attendance }}%</p>
+            <p><span class="font-semibold">Study Hours:</span> {{ student.study_hours }}</p>
+            <p><span class="font-semibold">Total Marks:</span> {{ student.marks }}</p>
+        </div>
+        <div>
+            <h2 class="font-semibold mb-2">Subject Marks</h2>
+            <ul class="list-disc pl-5">
+                {% for sub in ['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'] %}
+                <li><span class="font-semibold">{{ sub }}:</span> {{ student[sub] }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <h2 class="text-xl font-semibold mb-2 text-center">Performance Chart</h2>
+        <canvas id="performanceChart" class="w-full h-64"></canvas>
+    </div>
+
+    <div class="text-center">
+        <a href="{{ url_for('dashboard') }}" class="inline-block mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+<script>
+const ctx = document.getElementById('performanceChart').getContext('2d');
+const performanceChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'],
+        datasets: [{
+            label: 'Marks',
+            data: [
+                {{ student.ADA }}, 
+                {{ student.DBMS }}, 
+                {{ student.SEPM }}, 
+                {{ student.RMK }}, 
+                {{ student.CC }}, 
+                {{ student.ESK }}, 
+                {{ student.SDK }}
+            ],
+            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: { beginAtZero: true, max: 100 }
+        },
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
+############################second version
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+<div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+
+    <h1 class="text-3xl font-bold mb-4 text-center">Student Details</h1>
+
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+            <p><span class="font-semibold">USN:</span> {{ student.usn }}</p>
+            <p><span class="font-semibold">Name:</span> {{ student.name }}</p>
+            <p><span class="font-semibold">Attendance:</span> {{ student.attendance }}%</p>
+            <p><span class="font-semibold">Study Hours:</span> {{ student.study_hours }}</p>
+            <p><span class="font-semibold">Total Marks:</span> {{ student.marks }}</p>
+        </div>
+        <div>
+            <h2 class="font-semibold mb-2">Subject Marks</h2>
+            <ul class="list-disc pl-5">
+                {% for sub in ['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'] %}
+                <li><span class="font-semibold">{{ sub }}:</span> {{ student[sub] }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <h2 class="text-xl font-semibold mb-2 text-center">Performance Radar Chart</h2>
+        <canvas id="radarChart" class="w-full h-64"></canvas>
+    </div>
+
+    <div class="text-center">
+        <a href="{{ url_for('dashboard') }}" class="inline-block mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Back to Dashboard
+        </a>
+    </div>
+
+</div>
+<!--
+<script>
+const ctx = document.getElementById('radarChart').getContext('2d');
+const radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: ['Attendance', 'Study Hours', 'ADA', 'DBMS', 'SEPM', 'RMK', 'CC', 'ESK', 'SDK'],
+        datasets: [{
+            label: 'Performance',
+            data: [
+                {{ student.attendance }},
+                {{ student.study_hours }},
+                {{ student.ADA }},
+                {{ student.DBMS }},
+                {{ student.SEPM }},
+                {{ student.RMK }},
+                {{ student.CC }},
+                {{ student.ESK }},
+                {{ student.SDK }}
+            ],
+            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            r: {
+                suggestedMin: 0,
+                suggestedMax: 100
+            }
+        },
+        plugins: {
+            legend: { position: 'top' }
+        }
+    }
+});
+</script>
+########################### new script 
+-->
+<script>
+const ctx = document.getElementById('radarChart').getContext('2d');
+
+// Collect student data
+const dataValues = [
+    {{ student.attendance }},
+    {{ student.study_hours }},
+    {{ student.ADA }},
+    {{ student.DBMS }},
+    {{ student.SEPM }},
+    {{ student.RMK }},
+    {{ student.CC }},
+    {{ student.ESK }},
+    {{ student.SDK }}
+];
+
+// Generate point colors based on thresholds
+const pointColors = dataValues.map((value, index) => {
+    if(index === 0 && value < 50) return 'rgba(255, 0, 0, 1)';          // Attendance
+    if(index === 1 && value < 5) return 'rgba(255, 165, 0, 1)';         // Study Hours
+    if(index > 1 && value < 40) return 'rgba(255, 0, 0, 1)';            // Subjects
+    return 'rgba(34, 197, 94, 1)';                                      // Good performance
+});
+
+const radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: ['Attendance', 'Study Hours', 'ADA', 'DBMS', 'SEPM', 'RMK', 'CC', 'ESK', 'SDK'],
+        datasets: [{
+            label: 'Performance',
+            data: dataValues,
+            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            pointBackgroundColor: pointColors,
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            r: {
+                suggestedMin: 0,
+                suggestedMax: 100
+            }
+        },
+        plugins: {
+            legend: { position: 'top' }
+        }
+    }
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+<div class="max-w-7xl mx-auto">
+
+    <h1 class="text-3xl font-bold mb-6">Student Dashboard</h1>
+
+    <!-- Add Student Button -->
+    <a href="{{ url_for('add_student_route') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-6 inline-block">Add New Student</a>
+
+    <!-- Student Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded shadow">
+            <thead class="bg-gray-200 text-gray-700">
+                <tr>
+                    <th class="px-4 py-2">USN</th>
+                    <th class="px-4 py-2">Name</th>
+                    <th class="px-4 py-2">Attendance</th>
+                    <th class="px-4 py-2">Study Hours</th>
+                    <th class="px-4 py-2">Total Marks</th>
+                    <th class="px-4 py-2">ADA</th>
+                    <th class="px-4 py-2">DBMS</th>
+                    <th class="px-4 py-2">SEPM</th>
+                    <th class="px-4 py-2">RMK</th>
+                    <th class="px-4 py-2">CC</th>
+                    <th class="px-4 py-2">ESK</th>
+                    <th class="px-4 py-2">SDK</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for student in students %}
+                <tr class="border-b">
+                    <!--<td class="px-4 py-2">{{ student.usn }}</td> -->
+                    
+                    <td><a href="{{ url_for('view_student', usn=student.usn) }}" class="text-blue-500 hover:underline">
+                        {{ student.usn }}</a>
+                    </td>
+
+                    <td class="px-4 py-2">{{ student.name }}</td>
+                    <td class="px-4 py-2">{{ student.attendance }}</td>
+                    <td class="px-4 py-2">{{ student.study_hours }}</td>
+                    <td class="px-4 py-2">{{ student.marks }}</td>
+                    <td class="px-4 py-2">{{ student.ADA }}</td>
+                    <td class="px-4 py-2">{{ student.DBMS }}</td>
+                    <td class="px-4 py-2">{{ student.SEPM }}</td>
+                    <td class="px-4 py-2">{{ student.RMK }}</td>
+                    <td class="px-4 py-2">{{ student.CC }}</td>
+                    <td class="px-4 py-2">{{ student.ESK }}</td>
+                    <td class="px-4 py-2">{{ student.SDK }}</td>
+                    <td class="px-4 py-2 space-x-1">
+                        <!-- Edit Button -->
+                        <a href="{{ url_for('edit_student_route', usn=student.usn) }}" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Edit</a>
+                        
+                        <!-- Delete Form -->
+                        <form action="{{ url_for('delete_student_route', student_id=student.usn) }}" method="post" class="inline-block">
+                            <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Charts Section -->
+    <h2 class="text-2xl font-bold mt-10 mb-4">Charts</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for key, chart in charts.items() %}
+            {% if chart %}
+            <div class="bg-white p-4 rounded shadow text-center">
+                <h3 class="font-semibold mb-2 capitalize">{{ key.replace('_', ' ') }}</h3>
+                <img src="{{ url_for('static', filename=chart) }}" alt="{{ key }} chart" class="mx-auto max-w-full max-h-64">
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+</body>
+</html>

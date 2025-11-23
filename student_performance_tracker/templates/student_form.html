@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if student %}Edit{% else %}Add{% endif %} Student</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+
+    <h1 class="text-2xl font-bold mb-4">{% if student %}Edit{% else %}Add{% endif %} Student</h1>
+
+    <form action="{{ form_action }}" method="post" class="space-y-4">
+        <label class="block">
+            USN:
+            <input type="text" name="usn" value="{{ student.usn if student else '' }}" {% if student %}readonly{% endif %} class="border p-2 w-full rounded">
+        </label>
+        <label class="block">
+            Name:
+            <input type="text" name="name" value="{{ student.name if student else '' }}" class="border p-2 w-full rounded">
+        </label>
+
+        <label class="block">
+            Attendance:
+            <input type="number" step="any" name="attendance" value="{{ student.attendance if student else 0 }}" class="border p-2 w-full rounded">
+        </label>
+
+        <label class="block">
+            Study Hours:
+            <input type="number" step="any" name="study_hours" value="{{ student.study_hours if student else 0 }}" class="border p-2 w-full rounded">
+        </label>
+
+        <!-- Subject Marks -->
+        <h2 class="font-semibold mt-4 mb-2">Subject Marks</h2>
+        {% for sub in ['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'] %}
+        <label class="block">
+            {{ sub }}:
+            <input type="number" name="{{ sub }}" value="{{ student[sub] if student else 0 }}" class="border p-2 w-full rounded">
+        </label>
+        {% endfor %}
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            {% if student %}Update{% else %}Add{% endif %}
+        </button>
+    </form>
+
+    <a href="{{ url_for('dashboard') }}" class="inline-block mt-4 text-blue-500 hover:underline">Back to Dashboard</a>
+</div>
+</body>
+</html>
